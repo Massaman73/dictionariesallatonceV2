@@ -55,13 +55,9 @@ const Header = () => {
                   <a class="nav-link text-gray-300 p-0" href="#">Spanish</a>
                 </li>
                 <li class="nav-item pr-2">
-                  <a class="nav-link text-gray-300 p-0" href="#">French &#x1f1eb;</a>
+                  <a class="nav-link text-gray-300 p-0" href="#">French</a>
                 </li>
-                <li class="nav-item pr-2">
-                  <a class="nav-link disabled text-gray-300 p-0"
-                  >Disabled</a
-                  >
-                </li>
+                
               </ul>
 
             </div>

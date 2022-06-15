@@ -18,6 +18,237 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
+
+
+app.post("/apiCollins", (req, res) => {
+
+
+  async function allLists(postData) {
+    const browser = await playwright.webkit.launch({
+      headless: true
+    });
+
+    const page = await browser.newPage();
+    await page.goto(`https://www.collinsdictionary.com/dictionary/portuguese-english/${postData}`);
+
+    const allList = await page.$eval('.he', selected => {
+      // let data = [];
+      let sense = selected.querySelector('.cB.cB-def.dictionary.biling').innerHTML;
+      return sense;
+    });
+    return allList;
+  };
+
+
+  let resultFromCollins = allLists(req.body.postData);
+
+  resultFromCollins.then((response) => {
+    res.send(response);
+  })
+
+})
+app.post("/apiInfopedia", function (req, res) {
+  let result;
+
+  async function infopedia(word, lang) {
+    if (lang == '1') {
+      result = await axios.get(`https://www.infopedia.pt/dicionarios/portugues-ingles/${word}`)
+        .then((res) => {
+          const dom = new JSDOM(res.data).window.document;
+          dom.querySelector('.favorites').remove();
+          dom.querySelector('.dolPronunciaInfo').remove();
+          const item = dom.querySelector('.dolEntradaVverbete').outerHTML;
+          console.log(item);
+          return item;
+        }
+        );
+      return result;
+    } else if (lang == '2') {
+      result = await axios.get(`https://www.infopedia.pt/dicionarios/ingles-portugues/${word}`)
+        .then((res) => {
+          const dom = new JSDOM(res.data).window.document;
+          dom.querySelector('.favorites').remove();
+          dom.querySelector('.dolPronunciaInfo').remove();
+          const item = dom.querySelector('.dolEntradaVverbete').outerHTML;
+          console.log(item);
+          return item;
+        }
+        );
+      return result;
+    }
+  }
+
+  let resultFromInfopedia = infopedia(req.body.postData, req.body.postLang);
+
+  resultFromInfopedia.then((response) => {
+    res.send(response);
+  }
+  )
+
+
+
+})
+app.post("/apiReverso", function (req, res) {
+  let result;
+  async function reverso(word, lang) {
+    switch (lang) {
+      case "1":
+        result = await axios.get(`https://mobile-dictionary.reverso.net/fr/portugais-anglais/${word}`, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'
+          }
+        })
+          .then((res) => {
+            const dom = new JSDOM(res.data).window.document;
+            dom.querySelector('.logocorner').remove();
+            const item = dom.querySelector('#divCLR').outerHTML;
+
+            return item;
+          }
+          );
+        return result;
+      case "2":
+
+        result = await axios.get(`https://mobile-dictionary.reverso.net/fr/anglais-portugais/${word}`, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'
+          }
+        })
+          .then((res) => {
+            const dom = new JSDOM(res.data).window.document;
+            dom.querySelector('.logocorner').remove();
+            const item = dom.querySelector('#divCLR').outerHTML;
+
+            return item;
+          }
+          );
+        return result;
+      default:
+      return;
+     
+    }
+
+
+    
+  }
+
+  let resultFromReverso = reverso(req.body.postData, req.body.postLang);
+
+  resultFromReverso.then((response) => {
+    res.send(response);
+  }
+  ).catch((error) => {
+    console.log(error);
+  }
+  )
+
+})
+
+app.post("/apiMichaelis", function (req, res) {
+  let result;
+
+  async function michaelis(word, lang) {
+    if (lang == "1") {
+      result = await axios.get(`https://michaelis.uol.com.br/escolar-ingles/busca/portugues-ingles-escolar/${word}`, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'
+        }
+      })
+        .then((res) => {
+          const dom = new JSDOM(res.data).window.document;
+          const item = dom.querySelector('.verbete.bs-component').outerHTML;
+          console.log(item);
+          return item;
+        }
+        );
+      return result;
+    } else if (lang == '2') {
+      result = await axios.get(`https://michaelis.uol.com.br/escolar-ingles/busca/ingles-portugues-escolar/${word}`, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'
+        }
+      })
+        .then((res) => {
+          const dom = new JSDOM(res.data).window.document;
+          const item = dom.querySelector('.verbete.bs-component').outerHTML;
+          console.log(item);
+          return item;
+        }
+        );
+      return result;
+
+
+
+
+
+    }
+  }
+
+
+  let resultFromMichaelis = michaelis(req.body.postData, req.body.postLang);
+  resultFromMichaelis.then((response) => {
+
+
+    res.send(response);
+  }
+  ).catch((error) => {
+    console.log(error);
+  }
+  )
+
+
+
+})
+
+app.post("/apiLingea", function (req, res) {
+  let result;
+
+  async function lingea(word, lang) {
+    if (lang == "3") {
+      result = await axios.get(`https://www.dict.com/spanish-english/${word}`, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'
+        }
+      })
+        .then((res) => {
+          const dom = new JSDOM(res.data).window.document;
+          const item = dom.querySelector('#entry-wrapper').outerHTML;
+          console.log(item);
+          return item;
+        }
+        );
+      return result;
+    } else if (lang == '4') {
+      result = await axios.get(`https://www.dict.com/english-spanish/${word}`, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'
+        }
+      })
+        .then((res) => {
+          const dom = new JSDOM(res.data).window.document;
+          const item = dom.querySelector('#entry-wrapper').outerHTML;
+          console.log(item);
+          return item;
+        }
+        );
+      return result;
+    }
+  }
+  let resultFromLingea = lingea(req.body.postData, req.body.postLang);
+  resultFromLingea.then((response) => {
+    res.send(response);
+  }
+  ).catch((error) => {
+    console.log(error);
+  }
+  )
+})
+
+app.listen(port, () => {
+  console.log(`listening on *:${port}`);
+})
+
+
 /*
 app.get("/api", (req, res) => {
   
@@ -116,146 +347,4 @@ app.get("/api", (req, res) => {
  
 });
 */
-
-
-
-app.post("/apiCollins", (req, res) => {
-
-
-  async function allLists(postData) {
-    const browser = await playwright.webkit.launch({
-      headless: true
-    });
-
-    const page = await browser.newPage();
-    await page.goto(`https://www.collinsdictionary.com/dictionary/portuguese-english/${postData}`);
-
-    const allList = await page.$eval('.he', selected => {
-      // let data = [];
-      let sense = selected.querySelector('.cB.cB-def.dictionary.biling').innerHTML;
-      return sense;
-    });
-    return allList;
-  };
-
-
-  let resultFromCollins = allLists(req.body.postData);
-
-  resultFromCollins.then((response) => {
-    res.send(response);
-  })
-
-})
-app.post("/apiInfopedia", function (req, res) {
-  let result;
-
-  async function infopedia(word, lang) {
-    if (lang == '1') {
-      result = await axios.get(`https://www.infopedia.pt/dicionarios/portugues-ingles/${word}`)
-        .then((res) => {
-          const dom = new JSDOM(res.data).window.document;
-          dom.querySelector('.favorites').remove();
-          dom.querySelector('.dolPronunciaInfo').remove();
-          const item = dom.querySelector('.dolEntradaVverbete').outerHTML;
-          console.log(item);
-          return item;
-        }
-        );
-      return result;
-    } else if(lang == '2'){
-      result = await axios.get(`https://www.infopedia.pt/dicionarios/ingles-portugues/${word}`)
-        .then((res) => {
-          const dom = new JSDOM(res.data).window.document;
-          dom.querySelector('.favorites').remove();
-          dom.querySelector('.dolPronunciaInfo').remove();
-          const item = dom.querySelector('.dolEntradaVverbete').outerHTML;
-          console.log(item);
-          return item;
-        }
-        );
-      return result;
-    }
-  }
-
-  let resultFromInfopedia = infopedia(req.body.postData, req.body.postLang);
-
-  resultFromInfopedia.then((response) => {
-    res.send(response);
-  }
-  )
-
-
-
-})
-app.post("/apiReverso", function (req, res) {
-  let result;
-  async function reverso(word, lang) {
-    result = await axios.get(`https://mobile-dictionary.reverso.net/fr/portugais-anglais/${word}`, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'
-      }
-    })
-      .then((res) => {
-        const dom = new JSDOM(res.data).window.document;
-        dom.querySelector('.logocorner').remove();
-        const item = dom.querySelector('#divCLR').outerHTML;
-
-        return item;
-      }
-      );
-    return result;
-  }
-
-  let resultFromReverso = reverso(req.body.postData, req.body.postLang);
-
-  resultFromReverso.then((response) => {
-    res.send(response);
-  }
-  ).catch((error) => {
-    console.log(error);
-  }
-  )
-
-
-
-})
-app.post("/apiMichaelis", function (req, res) {
-  let result;
-  async function michaelis(word, lang) {
-    result = await axios.get(`https://michaelis.uol.com.br/escolar-ingles/busca/portugues-ingles-escolar/${word}`, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'
-      }
-    })
-      .then((res) => {
-        const dom = new JSDOM(res.data).window.document;
-        const item = dom.querySelector('.verbete.bs-component').outerHTML;
-        console.log(item);
-        return item;
-      }
-      );
-    return result;
-  }
-
-
-  let resultFromMichaelis = michaelis(req.body.postData, req.body.postLang);
-  resultFromMichaelis.then((response) => {
-
-
-    res.send(response);
-  }
-  ).catch((error) => {
-    console.log(error);
-  }
-  )
-
-
-
-})
-
-
-app.listen(port, () => {
-  console.log(`listening on *:${port}`);
-})
-
 
