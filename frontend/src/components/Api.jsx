@@ -8,19 +8,23 @@ const Api = () => {
   const [resFromReverso, setresFromReverso] = useState()
   const [resFromInfopedia, setresFromInfopedia] = useState()
   const [resFromMichaelis, setresFromMichaelis] = useState()
-const [resFromLingea, setresFromLingea] = useState()
+  const [resFromLingea, setresFromLingea] = useState()
+  const [resfromLarousse, setresfromLarousse] = useState()
   const [word, setWord] = useState("");
   const options = [
 
     { value: '1', label: 'Portuguese to English ' },
     { value: '2', label: 'English to Portuguese' },
-    //{ value: '3', label: 'Spanish to English' },
-    //{ value: '4', label: 'English to Spanish' },
+    { value: '3', label: 'Spanish to English' },
+    { value: '4', label: 'English to Spanish' },
   ];
   const [langValue, setlangValue] = useState(options[0].value);
   const [dicName1, setdicName1] = useState();
   const [dicName2, setdicName2] = useState();
   const [dicName3, setdicName3] = useState();
+  const [content1, setcontent1] = useState();
+  const [content2, setcontent2] = useState();
+  const [content3, setcontent3] = useState();
   const handleChange = (value) => {
     console.log(value.value);
     setlangValue(value.value);
@@ -29,20 +33,23 @@ const [resFromLingea, setresFromLingea] = useState()
     switch (value) {
       case "1":
       case "2":
+        
+        sendPostReverso();
+        sendPostInfo();
+        
+        sendPostMichaelis();
         setdicName1('Reverso')
         setdicName2('Infopedia')
         setdicName3("Michaelis")
-        sendPostInfo();
-        sendPostReverso();
-        sendPostMichaelis();
-
         return
       case "3":
       case "4":
+        sendPostReverso()
+        sendPostLingea()
+        sendPostLarousse()
         setdicName1('Reverso')
         setdicName2('Lingea')
-        setdicName3("SpanishDict")
-        sendPostLingea()
+        setdicName3("Larousse")
         return
       case "5":
       case "6":
@@ -51,7 +58,7 @@ const [resFromLingea, setresFromLingea] = useState()
         setdicName3("SpanishDic")
         return
       default:
-        
+
         return
     }
 
@@ -66,7 +73,8 @@ const [resFromLingea, setresFromLingea] = useState()
     })
       .then(function (res) {
         console.log(res.data);
-        setresFromInfopedia(res.data);
+        //setresFromInfopedia(res.data);
+        setcontent2(res.data);
       })
   }
   const sendPostReverso = () => {
@@ -76,7 +84,8 @@ const [resFromLingea, setresFromLingea] = useState()
     })
       .then(function (res) {
         console.log(res.data);
-        setresFromReverso(res.data);
+        //setresFromReverso(res.data);
+        setcontent1(res.data);
       })
   }
 
@@ -87,7 +96,8 @@ const [resFromLingea, setresFromLingea] = useState()
     })
       .then(function (res) {
         console.log(res.data);
-        setresFromMichaelis(res.data);
+        //setresFromMichaelis();
+        setcontent3(res.data)
       })
   }
   const sendPostLingea = () => {
@@ -97,7 +107,20 @@ const [resFromLingea, setresFromLingea] = useState()
     })
       .then(function (res) {
         console.log(res.data);
-        setresFromLingea(res.data);
+        //setresFromLingea(res.data);
+        setcontent2(res.data)
+
+      })
+  }
+  const sendPostLarousse = () => {
+    axios.post('/apiLarousse', {
+      postData: word,
+      postLang: langValue
+    })
+      .then(function (res) {
+        console.log(res.data);
+        //setresfromLarousse(res.data);
+        setcontent3(res.data)
       })
   }
 
@@ -119,7 +142,7 @@ const [resFromLingea, setresFromLingea] = useState()
             <button onClick={() => {
 
               setdicNameAndSend(langValue);
-            
+
             }} className="btn bg-gradient-to-r from-teal-500 to-cyan-600 inline-block px-6 py-2.5  text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700  focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out flex items-center" type="button" id="button-addon2">
               <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" className="w-4" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                 <path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path>
@@ -208,19 +231,27 @@ const [resFromLingea, setresFromLingea] = useState()
         </li>
       </ul>
       <div className="tab-content" id="tabs-tabContentJustify">
-        <div className="tab-pane fade show active" id="tabs-homeJustify" role="tabpanel"aria-labelledby="tabs-home-tabJustify">
-          <div dangerouslySetInnerHTML={{ __html: resFromReverso }}>
-          </div>
-        </div>
-        <div className="tab-pane fade" id="tabs-profileJustify" role="tabpanel" aria-labelledby="tabs-profile-tabJustify">
-          <div dangerouslySetInnerHTML={{ __html: resFromInfopedia }}>
-          </div>
-        </div>
-        <div className="tab-pane fade" id="tabs-messagesJustify" role="tabpanel" aria-labelledby="tabs-profile-tabJustify">
-          <div dangerouslySetInnerHTML={{ __html: resFromMichaelis }}>
-          </div>
-        </div>
+        
+                  <div className="tab-pane fade show active" id="tabs-homeJustify" role="tabpanel" aria-labelledby="tabs-home-tabJustify">
+                    <div dangerouslySetInnerHTML={{ __html: content1 }}>
+                    </div>
+                  </div>
+                  <div className="tab-pane fade" id="tabs-profileJustify" role="tabpanel" aria-labelledby="tabs-profile-tabJustify">
+                    <div dangerouslySetInnerHTML={{ __html: content2 }}>
+                    </div>
+                  </div>
+                  <div className="tab-pane fade" id="tabs-messagesJustify" role="tabpanel" aria-labelledby="tabs-profile-tabJustify">
+                    <div dangerouslySetInnerHTML={{ __html: content3 }}>
+                    </div>
+                  </div>
+               
+
+    
+
+        
+      
       </div>
+      
 
 
 

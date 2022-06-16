@@ -90,12 +90,16 @@ app.post("/apiInfopedia", function (req, res) {
 })
 app.post("/apiReverso", function (req, res) {
   let result;
+  let URL;
+  let UserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'
   async function reverso(word, lang) {
     switch (lang) {
       case "1":
+       // URL = `https://mobile-dictionary.reverso.net/fr/portugais-anglais/${word}`; 
+        
         result = await axios.get(`https://mobile-dictionary.reverso.net/fr/portugais-anglais/${word}`, {
           headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'
+            'User-Agent': UserAgent
           }
         })
           .then((res) => {
@@ -108,10 +112,39 @@ app.post("/apiReverso", function (req, res) {
           );
         return result;
       case "2":
-
         result = await axios.get(`https://mobile-dictionary.reverso.net/fr/anglais-portugais/${word}`, {
           headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'
+            'User-Agent':UserAgent
+          }
+        })
+          .then((res) => {
+            const dom = new JSDOM(res.data).window.document;
+            dom.querySelector('.logocorner').remove();
+            const item = dom.querySelector('#divCLR').outerHTML;
+
+            return item;
+          }
+          );
+        return result;
+      case "3":
+        result = await axios.get(`https://mobile-dictionary.reverso.net/fr/espagnol-anglais/${word}`, {
+          headers: {
+            'User-Agent': UserAgent
+          }
+        })
+          .then((res) => {
+            const dom = new JSDOM(res.data).window.document;
+            dom.querySelector('.logocorner').remove();
+            const item = dom.querySelector('#divCLR').outerHTML;
+
+            return item;
+          }
+          );
+        return result;
+      case "4":
+        result = await axios.get(`https://mobile-dictionary.reverso.net/fr/anglais-espagnol/${word}`, {
+          headers: {
+            'User-Agent': UserAgent
           }
         })
           .then((res) => {
@@ -177,10 +210,6 @@ app.post("/apiMichaelis", function (req, res) {
         );
       return result;
 
-
-
-
-
     }
   }
 
@@ -243,6 +272,54 @@ app.post("/apiLingea", function (req, res) {
   }
   )
 })
+
+app.post("/apiLarousse", function (req, res) {
+  let result;
+
+  async function lingea(word, lang) {
+    if (lang == "3") {
+      result = await axios.get(`https://www.larousse.fr/dictionnaires/espagnol-anglais/${word}`, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'
+        }
+      })
+        .then((res) => {
+          const dom = new JSDOM(res.data).window.document;
+          const item = dom.querySelector('.article_bilingue').outerHTML;
+          console.log(item);
+          return item;
+        }
+        );
+      return result;
+    } else if (lang == '4') {
+      result = await axios.get(`https://www.larousse.fr/dictionnaires/anglais-espagnol/${word}`, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36'
+        }
+      })
+        .then((res) => {
+          const dom = new JSDOM(res.data).window.document;
+          const item = dom.querySelector('.article_bilingue').outerHTML;
+          console.log(item);
+          return item;
+        }
+        );
+      return result;
+    }
+  }
+  let resultFromLingea = lingea(req.body.postData, req.body.postLang);
+  resultFromLingea.then((response) => {
+    res.send(response);
+  }
+  ).catch((error) => {
+    console.log(error);
+  }
+  )
+})
+
+
+
+
 
 app.listen(port, () => {
   console.log(`listening on *:${port}`);
