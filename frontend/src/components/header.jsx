@@ -25,7 +25,7 @@ const Header = () => {
              w-full 
              flex 
              flex-wrap 
-             justify-center
+             justify-between
              px-6">
             <button className="
                 bg-cyan-900
