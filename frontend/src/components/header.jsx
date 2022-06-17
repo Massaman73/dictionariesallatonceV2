@@ -25,7 +25,7 @@ const Header = () => {
              w-full 
              flex 
              flex-wrap 
-             justify-between 
+             justify-center
              px-6">
             <button className="
                 bg-cyan-900
@@ -46,14 +46,12 @@ const Header = () => {
                 </path>
               </svg>
             </button>
-            <div className="collapse navbar-collapse flex-grow items-center" id="navbarSupportedContent">
+            <div className="collapse navbar-collapse items-center" id="navbarSupportedContent">
              <Modal/>
-              <ul className="navbar-nav flex flex-col pl-0 list-style-none mr-auto">
-                <li className="nav-item px-2">
-                  <a className="nav-link active" aria-current="page" href="#"></a>
-                </li>
+              <ul className="navbar-nav flex flex-row-reverse  jutify-between pl-0 list-style-none mr-auto">
+                
                 <li className="nav-item pr-2">
-                  <a className="nav-link text-gray-300 p-0 cursor-pointer" data-bs-toggle="modal" data-bs-target="#exampleModal">About</a>
+                  <a className="nav-link active  font-bold text-gray-300 p-0 cursor-pointer" data-bs-toggle="modal" data-bs-target="#exampleModal">About</a>
                 </li>
                 
                 
